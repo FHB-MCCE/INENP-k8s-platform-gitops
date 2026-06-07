@@ -24,9 +24,10 @@ Dieses Repository enthält die GitOps-Definitionen für:
 
 ```
 .
+├── infrastructure/   # Cluster-weite Infrastruktur (cert-manager, ExternalDNS, ESO)
+├── platform/         # Platform-Services (Crossplane, CloudNativePG Operator)
 ├── apps/             # Argo CD App-of-Apps Definitionen
-├── infrastructure/   # Platform-Operator Helm Releases
-├── tenants/          # Tenant-spezifische Konfigurationen
+├── tenants/          # Tenant-spezifische Konfigurationen (Namespaces, Claims)
 ├── .github/          # CI/CD Workflows
 └── README.md
 ```
