@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: inenp-platform-root
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: inenp-platform-root
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/FHB-MCCE/INENP-k8s-platform-gitops.git
+    targetRevision: main
+    path: apps/platform
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
