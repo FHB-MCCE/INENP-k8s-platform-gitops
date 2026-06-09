@@ -40,6 +40,7 @@ Der Gate-3-Bootstrap ist in [docs/argocd-bootstrap.md](docs/argocd-bootstrap.md)
 ## Plattform-Operatoren
 
 - cert-manager: [docs/cert-manager.md](docs/cert-manager.md)
+- External Secrets Operator: [docs/external-secrets.md](docs/external-secrets.md)
 
 ## CI/CD
 

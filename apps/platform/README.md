@@ -14,3 +14,4 @@ Gate 3 adds platform operators here in separate pull requests so ownership stays
 Current child Applications:
 
 - `cert-manager`
+- `external-secrets`
