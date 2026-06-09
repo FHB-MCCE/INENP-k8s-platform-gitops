@@ -18,3 +18,5 @@ Current child Applications:
 - `cloudnative-pg`
 - `external-dns`
 - `cluster-secret-store`
+- `crossplane`
+- `crossplane-providers`
