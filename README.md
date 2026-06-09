@@ -43,6 +43,7 @@ Der Gate-3-Bootstrap ist in [docs/argocd-bootstrap.md](docs/argocd-bootstrap.md)
 - External Secrets Operator: [docs/external-secrets.md](docs/external-secrets.md)
 - CloudNativePG: [docs/cloudnative-pg.md](docs/cloudnative-pg.md)
 - ExternalDNS: [docs/external-dns.md](docs/external-dns.md)
+- ClusterSecretStore: [docs/cluster-secret-store.md](docs/cluster-secret-store.md)
 
 ## CI/CD
 
