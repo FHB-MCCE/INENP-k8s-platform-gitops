@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-dns
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: external-dns
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  project: default
+  source:
+    repoURL: https://kubernetes-sigs.github.io/external-dns
+    chart: external-dns
+    targetRevision: 1.15.0
+    helm:
+      releaseName: external-dns
+      valuesObject:
+        provider: google
+        policy: upsert-only
+        registry: txt
+        txtOwnerId: inenp-dev-gke
+        domainFilters:
+          - inenp.naehrer.me
+        extraArgs:
+          - --google-project=dulcet-velocity-495612-j0
+          - --google-zone-visibility=public
+        serviceAccount:
+          annotations:
+            iam.gke.io/gcp-service-account: external-dns@dulcet-velocity-495612-j0.iam.gserviceaccount.com
+        sources:
+          - service
+          - ingress
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: external-dns
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
