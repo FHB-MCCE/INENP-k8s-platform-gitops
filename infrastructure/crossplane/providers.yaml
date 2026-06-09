@@ -1,0 +1,19 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-kubernetes
+  labels:
+    app.kubernetes.io/name: provider-kubernetes
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.15.0
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-helm
+  labels:
+    app.kubernetes.io/name: provider-helm
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-helm:v0.20.0

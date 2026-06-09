@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crossplane
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: crossplane
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  project: default
+  source:
+    repoURL: https://charts.crossplane.io/stable
+    chart: crossplane
+    targetRevision: 1.17.2
+    helm:
+      releaseName: crossplane
+      valuesObject:
+        serviceAccount:
+          customAnnotations:
+            iam.gke.io/gcp-service-account: crossplane@dulcet-velocity-495612-j0.iam.gserviceaccount.com
+        metrics:
+          enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: crossplane-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
