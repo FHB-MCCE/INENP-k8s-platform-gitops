@@ -17,3 +17,4 @@ Current child Applications:
 - `external-secrets`
 - `cloudnative-pg`
 - `external-dns`
+- `cluster-secret-store`
