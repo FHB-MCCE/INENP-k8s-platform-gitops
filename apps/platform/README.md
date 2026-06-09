@@ -15,3 +15,4 @@ Current child Applications:
 
 - `cert-manager`
 - `external-secrets`
+- `cloudnative-pg`
