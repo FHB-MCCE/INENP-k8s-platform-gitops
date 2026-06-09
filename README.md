@@ -37,6 +37,10 @@ Dieses Repository enthält die GitOps-Definitionen für:
 
 Der Gate-3-Bootstrap ist in [docs/argocd-bootstrap.md](docs/argocd-bootstrap.md) dokumentiert. Argo CD wird zunächst nur intern betrieben; öffentliche Erreichbarkeit folgt später über DNS und cert-manager.
 
+## Plattform-Operatoren
+
+- cert-manager: [docs/cert-manager.md](docs/cert-manager.md)
+
 ## CI/CD
 
 Pull Requests werden automatisch validiert:

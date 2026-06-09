@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.jetstack.io
+      chart: cert-manager
+      targetRevision: v1.16.2
+      helm:
+        releaseName: cert-manager
+        valuesObject:
+          crds:
+            enabled: true
+          serviceAccount:
+            annotations:
+              iam.gke.io/gcp-service-account: cert-manager@dulcet-velocity-495612-j0.iam.gserviceaccount.com
+          global:
+            leaderElection:
+              namespace: cert-manager
+    - repoURL: https://github.com/FHB-MCCE/INENP-k8s-platform-gitops.git
+      targetRevision: main
+      path: infrastructure/cert-manager
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

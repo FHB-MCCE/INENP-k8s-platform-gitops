@@ -10,3 +10,7 @@ Gate 3 adds platform operators here in separate pull requests so ownership stays
 - ExternalDNS
 - ClusterSecretStore
 - Crossplane providers
+
+Current child Applications:
+
+- `cert-manager`
