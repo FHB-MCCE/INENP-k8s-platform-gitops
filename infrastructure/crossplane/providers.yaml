@@ -16,4 +16,4 @@ metadata:
     app.kubernetes.io/name: provider-helm
     app.kubernetes.io/part-of: inenp-platform
 spec:
-  package: xpkg.upbound.io/crossplane-contrib/provider-helm:v0.20.0
+  package: xpkg.crossplane.io/crossplane-contrib/provider-helm:v0.21.0
