@@ -50,3 +50,230 @@ spec:
           toFieldPath: status.namespace
           policy:
             fromFieldPath: Optional
+    - name: backend-app-secret
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: external-secrets.io/v1beta1
+              kind: ExternalSecret
+              metadata:
+                name: backend-app-secrets
+                namespace: tenant-placeholder
+                labels:
+                  app.kubernetes.io/name: backend-app-secrets
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/tenant: placeholder
+              spec:
+                refreshInterval: 1h
+                secretStoreRef:
+                  kind: ClusterSecretStore
+                  name: gcp-secret-manager
+                target:
+                  name: backend-app-secrets
+                  creationPolicy: Owner
+                  template:
+                    engineVersion: v2
+                    data:
+                      username: weather
+                      password: "{{ .databasePassword }}"
+                      spring-datasource-url: jdbc:postgresql://tenant-placeholder-db-rw.tenant-placeholder.svc.cluster.local:5432/weather
+                      spring-datasource-username: weather
+                      spring-datasource-password: "{{ .databasePassword }}"
+                      avwx-api-key: "{{ .avwxApiKey }}"
+                data:
+                  - secretKey: databasePassword
+                    remoteRef:
+                      key: database-app-password
+                  - secretKey: avwxApiKey
+                    remoteRef:
+                      key: avwx-api-key
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
+        - type: CombineFromComposite
+          combine:
+            strategy: string
+            variables:
+              - fromFieldPath: spec.parameters.tenantName
+              - fromFieldPath: spec.parameters.tenantName
+            string:
+              fmt: jdbc:postgresql://%s-db-rw.tenant-%s.svc.cluster.local:5432/weather
+          toFieldPath: spec.forProvider.manifest.spec.target.template.data[spring-datasource-url]
+    - name: tenant-database
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: postgresql.cnpg.io/v1
+              kind: Cluster
+              metadata:
+                name: tenant-placeholder-db
+                namespace: tenant-placeholder
+                labels:
+                  app.kubernetes.io/name: tenant-database
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/tenant: placeholder
+              spec:
+                instances: 1
+                bootstrap:
+                  initdb:
+                    database: weather
+                    owner: weather
+                    secret:
+                      name: backend-app-secrets
+                storage:
+                  size: 1Gi
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: "%s-db"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.databaseSize
+          toFieldPath: spec.forProvider.manifest.spec.storage.size
+          transforms:
+            - type: map
+              map:
+                small: 1Gi
+                medium: 5Gi
+    - name: backend-release
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Application
+              metadata:
+                name: tenant-placeholder-backend
+                namespace: argocd
+                labels:
+                  app.kubernetes.io/name: tenant-backend
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/tenant: placeholder
+              spec:
+                project: default
+                source:
+                  repoURL: https://github.com/FHB-MCCE/INENP-k8s-platform-backend.git
+                  targetRevision: main
+                  path: charts/weather-app-backend
+                  helm:
+                    releaseName: weather-app-backend
+                    valuesObject:
+                      image:
+                        tag: latest
+                      secrets:
+                        existingSecretName: backend-app-secrets
+                        databaseUrlKey: spring-datasource-url
+                        databaseUsernameKey: spring-datasource-username
+                        databasePasswordKey: spring-datasource-password
+                        avwxApiKeyKey: avwx-api-key
+                      ingress:
+                        enabled: true
+                        className: nginx
+                        annotations:
+                          cert-manager.io/cluster-issuer: letsencrypt-production
+                        hosts:
+                          - host: api.tenant-placeholder.inenp.naehrer.me
+                            paths:
+                              - path: /
+                                pathType: Prefix
+                        tls:
+                          - secretName: tenant-placeholder-backend-tls
+                            hosts:
+                              - api.tenant-placeholder.inenp.naehrer.me
+                destination:
+                  server: https://kubernetes.default.svc
+                  namespace: tenant-placeholder
+                syncPolicy:
+                  automated:
+                    prune: true
+                    selfHeal: true
+                  syncOptions:
+                    - CreateNamespace=true
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: "%s-backend"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.spec.destination.namespace
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.backendImageTag
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.image.tag
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.hostname
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.ingress.hosts[0].host
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: api.%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.hostname
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.ingress.tls[0].hosts[0]
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: api.%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.ingress.tls[0].secretName
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: "%s-backend-tls"
