@@ -28,6 +28,8 @@ runtimeConfig:
 ingress:
   enabled: true
   className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
   hosts:
     - host: <tenant>.inenp.naehrer.me
       paths:

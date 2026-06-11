@@ -277,3 +277,103 @@ spec:
               string:
                 type: Format
                 fmt: "%s-backend-tls"
+    - name: frontend-release
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Application
+              metadata:
+                name: tenant-placeholder-frontend
+                namespace: argocd
+                labels:
+                  app.kubernetes.io/name: tenant-frontend
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/tenant: placeholder
+              spec:
+                project: default
+                source:
+                  repoURL: https://github.com/FHB-MCCE/INENP-k8s-platform-frontend.git
+                  targetRevision: main
+                  path: charts/weather-app-frontend
+                  helm:
+                    releaseName: weather-app-frontend
+                    valuesObject:
+                      image:
+                        tag: latest
+                      runtimeConfig:
+                        backendApiUrl: https://api.tenant-placeholder.inenp.naehrer.me
+                      ingress:
+                        enabled: true
+                        className: nginx
+                        annotations:
+                          cert-manager.io/cluster-issuer: letsencrypt-production
+                        hosts:
+                          - host: tenant-placeholder.inenp.naehrer.me
+                            paths:
+                              - path: /
+                                pathType: Prefix
+                        tls:
+                          - secretName: tenant-placeholder-frontend-tls
+                            hosts:
+                              - tenant-placeholder.inenp.naehrer.me
+                destination:
+                  server: https://kubernetes.default.svc
+                  namespace: tenant-placeholder
+                syncPolicy:
+                  automated:
+                    prune: true
+                    selfHeal: true
+                  syncOptions:
+                    - CreateNamespace=true
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: "%s-frontend"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.spec.destination.namespace
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.frontendImageTag
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.image.tag
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.hostname
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.runtimeConfig.backendApiUrl
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: https://api.%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.hostname
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.ingress.hosts[0].host
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.hostname
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.ingress.tls[0].hosts[0]
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.spec.source.helm.valuesObject.ingress.tls[0].secretName
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: "%s-frontend-tls"
