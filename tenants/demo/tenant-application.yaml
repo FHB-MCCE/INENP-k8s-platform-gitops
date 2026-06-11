@@ -1,0 +1,19 @@
+---
+apiVersion: platform.inenp.at/v1alpha1
+kind: TenantApplication
+metadata:
+  name: demo
+  namespace: tenants
+  labels:
+    app.kubernetes.io/name: demo-tenant
+    app.kubernetes.io/part-of: inenp-platform
+    inenp.at/environment: demo
+    inenp.at/tenant: demo
+spec:
+  parameters:
+    tenantName: demo
+    environment: demo
+    hostname: demo.inenp.naehrer.me
+    frontendImageTag: latest
+    backendImageTag: latest
+    databaseSize: small
