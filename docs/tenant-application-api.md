@@ -1,10 +1,9 @@
 # TenantApplication API
 
 The `TenantApplication` claim is the GitOps entry point for tenant-specific
-weather application instances. Gate 5 starts with the tenant API and a base
-composition that creates the tenant namespace. Backend, frontend, database,
-secrets, ingress, TLS and policy resources are added by the follow-up Gate 5
-issues owned by the respective team members.
+weather application instances. The Gate 5 composition creates the tenant
+namespace, database, backend release, frontend release, secrets, ingress, TLS,
+resource controls, and isolation policies.
 
 ## API Group
 
@@ -46,7 +45,6 @@ spec:
     databaseSize: small
 ```
 
-The current base composition creates the namespace `tenant-<tenantName>` and
-labels it with the tenant and environment. Later Gate 5 PRs extend the same
-composition with tenant secrets, CloudNativePG resources, Helm releases,
-Ingress/TLS and isolation policies.
+The composition creates the namespace `tenant-<tenantName>` and labels it with
+the tenant and environment. The `tenants/` directory contains concrete staging
+and demo claims for GitOps-driven provisioning.

@@ -1,0 +1,29 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tenant-claims
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: tenant-claims
+    app.kubernetes.io/part-of: inenp-platform
+  annotations:
+    argocd.argoproj.io/sync-wave: "30"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/FHB-MCCE/INENP-k8s-platform-gitops.git
+    targetRevision: main
+    path: tenants
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tenants
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

@@ -49,6 +49,7 @@ Der Gate-3-Bootstrap ist in [docs/argocd-bootstrap.md](docs/argocd-bootstrap.md)
 - Tenant backend and database: [docs/tenant-backend-database.md](docs/tenant-backend-database.md)
 - Tenant frontend release: [docs/tenant-frontend-release.md](docs/tenant-frontend-release.md)
 - Tenant isolation policies: [docs/tenant-isolation-policies.md](docs/tenant-isolation-policies.md)
+- Tenant claims: [docs/tenant-claims.md](docs/tenant-claims.md)
 
 ## CI/CD
 

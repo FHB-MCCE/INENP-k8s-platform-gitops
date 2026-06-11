@@ -1,0 +1,19 @@
+---
+apiVersion: platform.inenp.at/v1alpha1
+kind: TenantApplication
+metadata:
+  name: staging
+  namespace: tenants
+  labels:
+    app.kubernetes.io/name: staging-tenant
+    app.kubernetes.io/part-of: inenp-platform
+    inenp.at/environment: staging
+    inenp.at/tenant: staging
+spec:
+  parameters:
+    tenantName: staging
+    environment: staging
+    hostname: staging.inenp.naehrer.me
+    frontendImageTag: latest
+    backendImageTag: latest
+    databaseSize: small
