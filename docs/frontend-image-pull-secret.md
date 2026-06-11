@@ -31,7 +31,8 @@ The token only needs `read:packages` for the private frontend image.
 ## Tenant Namespace Wiring
 
 Each tenant namespace gets an `ExternalSecret` that materializes the pull secret as
-`frontend-ghcr-pull`:
+`frontend-ghcr-pull`. The TenantApplication composition creates this ExternalSecret
+for every tenant:
 
 ```yaml
 apiVersion: external-secrets.io/v1beta1
@@ -70,4 +71,3 @@ imagePullSecrets:
 - Tenant namespaces receive a pull-only token, not a package write token.
 - If a token is rotated, External Secrets Operator refreshes the Kubernetes secret
   without a Git change.
-
