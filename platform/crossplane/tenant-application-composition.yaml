@@ -50,6 +50,178 @@ spec:
           toFieldPath: status.namespace
           policy:
             fromFieldPath: Optional
+    - name: tenant-resource-quota
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: ResourceQuota
+              metadata:
+                name: tenant-resource-quota
+                namespace: tenant-placeholder
+                labels:
+                  app.kubernetes.io/name: tenant-resource-quota
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/tenant: placeholder
+              spec:
+                hard:
+                  requests.cpu: "1"
+                  requests.memory: 2Gi
+                  limits.cpu: "2"
+                  limits.memory: 4Gi
+                  pods: "20"
+                  services: "10"
+                  secrets: "20"
+                  configmaps: "20"
+                  persistentvolumeclaims: "4"
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
+    - name: tenant-limit-range
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: LimitRange
+              metadata:
+                name: tenant-default-limits
+                namespace: tenant-placeholder
+                labels:
+                  app.kubernetes.io/name: tenant-default-limits
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/tenant: placeholder
+              spec:
+                limits:
+                  - type: Container
+                    defaultRequest:
+                      cpu: 100m
+                      memory: 128Mi
+                    default:
+                      cpu: 500m
+                      memory: 512Mi
+                    max:
+                      cpu: "1"
+                      memory: 1Gi
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
+    - name: tenant-network-policy
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: networking.k8s.io/v1
+              kind: NetworkPolicy
+              metadata:
+                name: tenant-ingress-isolation
+                namespace: tenant-placeholder
+                labels:
+                  app.kubernetes.io/name: tenant-ingress-isolation
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/tenant: placeholder
+              spec:
+                podSelector: {}
+                policyTypes:
+                  - Ingress
+                ingress:
+                  - from:
+                      - podSelector: {}
+                  - from:
+                      - namespaceSelector:
+                          matchLabels:
+                            kubernetes.io/metadata.name: ingress-nginx
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
+    - name: frontend-pull-secret
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: external-secrets.io/v1beta1
+              kind: ExternalSecret
+              metadata:
+                name: frontend-ghcr-pull
+                namespace: tenant-placeholder
+                labels:
+                  app.kubernetes.io/name: frontend-ghcr-pull
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/tenant: placeholder
+              spec:
+                refreshInterval: 1h
+                secretStoreRef:
+                  kind: ClusterSecretStore
+                  name: gcp-secret-manager
+                target:
+                  name: frontend-ghcr-pull
+                  creationPolicy: Owner
+                  template:
+                    type: kubernetes.io/dockerconfigjson
+                data:
+                  - secretKey: .dockerconfigjson
+                    remoteRef:
+                      key: inenp-ghcr-frontend-pull
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
     - name: backend-app-secret
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha2
