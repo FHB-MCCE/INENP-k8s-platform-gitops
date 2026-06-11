@@ -1,0 +1,97 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xtenantapplications.platform.inenp.at
+  labels:
+    app.kubernetes.io/name: tenant-application
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  group: platform.inenp.at
+  names:
+    kind: XTenantApplication
+    plural: xtenantapplications
+  claimNames:
+    kind: TenantApplication
+    plural: tenantapplications
+  defaultCompositionRef:
+    name: tenant-application-base
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: TenantApplication provisions one isolated weather app tenant.
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  type: object
+                  description: Tenant-specific configuration passed to the composition.
+                  properties:
+                    tenantName:
+                      type: string
+                      description: DNS-safe tenant identifier used for resource names.
+                      minLength: 1
+                      maxLength: 40
+                      pattern: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+                    environment:
+                      type: string
+                      description: Logical environment for labels and later value selection.
+                      default: dev
+                      enum:
+                        - dev
+                        - staging
+                        - demo
+                        - prod
+                    hostname:
+                      type: string
+                      description: Public frontend hostname for the tenant.
+                      minLength: 1
+                      pattern: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+                    frontendImageTag:
+                      type: string
+                      description: Frontend image tag from GHCR.
+                      minLength: 1
+                    backendImageTag:
+                      type: string
+                      description: Backend image tag from GHCR.
+                      minLength: 1
+                    databaseSize:
+                      type: string
+                      description: T-shirt size used by later database composition steps.
+                      default: small
+                      enum:
+                        - small
+                        - medium
+                  required:
+                    - tenantName
+                    - hostname
+                    - frontendImageTag
+                    - backendImageTag
+              required:
+                - parameters
+            status:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: Kubernetes namespace created for the tenant.
+          required:
+            - spec
+      additionalPrinterColumns:
+        - name: Tenant
+          type: string
+          jsonPath: .spec.parameters.tenantName
+        - name: Environment
+          type: string
+          jsonPath: .spec.parameters.environment
+        - name: Hostname
+          type: string
+          jsonPath: .spec.parameters.hostname
+        - name: Namespace
+          type: string
+          jsonPath: .status.namespace

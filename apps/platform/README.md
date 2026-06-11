@@ -10,6 +10,7 @@ Gate 3 adds platform operators here in separate pull requests so ownership stays
 - ExternalDNS
 - ClusterSecretStore
 - Crossplane providers
+- TenantApplication API
 
 Current child Applications:
 
@@ -20,3 +21,4 @@ Current child Applications:
 - `cluster-secret-store`
 - `crossplane`
 - `crossplane-providers`
+- `tenant-application-api`

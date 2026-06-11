@@ -45,6 +45,7 @@ Der Gate-3-Bootstrap ist in [docs/argocd-bootstrap.md](docs/argocd-bootstrap.md)
 - ExternalDNS: [docs/external-dns.md](docs/external-dns.md)
 - ClusterSecretStore: [docs/cluster-secret-store.md](docs/cluster-secret-store.md)
 - Crossplane: [docs/crossplane.md](docs/crossplane.md)
+- TenantApplication API: [docs/tenant-application-api.md](docs/tenant-application-api.md)
 
 ## CI/CD
 

@@ -1,0 +1,22 @@
+---
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  name: kubernetes-provider
+  labels:
+    app.kubernetes.io/name: kubernetes-provider
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  credentials:
+    source: InjectedIdentity
+---
+apiVersion: helm.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: helm-provider
+  labels:
+    app.kubernetes.io/name: helm-provider
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  credentials:
+    source: InjectedIdentity
