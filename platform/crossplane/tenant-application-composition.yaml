@@ -1,0 +1,52 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: tenant-application-base
+  labels:
+    app.kubernetes.io/name: tenant-application-base
+    app.kubernetes.io/part-of: inenp-platform
+    crossplane.io/xrd: xtenantapplications.platform.inenp.at
+spec:
+  compositeTypeRef:
+    apiVersion: platform.inenp.at/v1alpha1
+    kind: XTenantApplication
+  resources:
+    - name: tenant-namespace
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha2
+        kind: Object
+        spec:
+          providerConfigRef:
+            name: kubernetes-provider
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: tenant-placeholder
+                labels:
+                  app.kubernetes.io/part-of: inenp-platform
+                  inenp.at/managed-by: crossplane
+                  inenp.at/environment: dev
+                  inenp.at/tenant: placeholder
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.name
+          transforms:
+            - type: string
+              string:
+                type: Format
+                fmt: tenant-%s
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.tenantName
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/tenant]
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.environment
+          toFieldPath: spec.forProvider.manifest.metadata.labels[inenp.at/environment]
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.manifest.metadata.name
+          toFieldPath: status.namespace
+          policy:
+            fromFieldPath: Optional
