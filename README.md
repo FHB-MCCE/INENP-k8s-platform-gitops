@@ -46,6 +46,7 @@ Der Gate-3-Bootstrap ist in [docs/argocd-bootstrap.md](docs/argocd-bootstrap.md)
 - ClusterSecretStore: [docs/cluster-secret-store.md](docs/cluster-secret-store.md)
 - Crossplane: [docs/crossplane.md](docs/crossplane.md)
 - TenantApplication API: [docs/tenant-application-api.md](docs/tenant-application-api.md)
+- Tenant backend and database: [docs/tenant-backend-database.md](docs/tenant-backend-database.md)
 
 ## CI/CD
 

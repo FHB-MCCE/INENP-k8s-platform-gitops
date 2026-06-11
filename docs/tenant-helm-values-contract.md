@@ -55,10 +55,25 @@ image:
 
 secrets:
   existingSecretName: backend-app-secrets
-  datasourceUrlKey: spring-datasource-url
-  datasourceUsernameKey: spring-datasource-username
-  datasourcePasswordKey: spring-datasource-password
+  databaseUrlKey: spring-datasource-url
+  databaseUsernameKey: spring-datasource-username
+  databasePasswordKey: spring-datasource-password
   avwxApiKeyKey: avwx-api-key
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+  hosts:
+    - host: api.<tenant>.inenp.naehrer.me
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: <tenant>-backend-tls
+      hosts:
+        - api.<tenant>.inenp.naehrer.me
 ```
 
 The referenced backend secret is expected to be created through External Secrets
@@ -81,4 +96,3 @@ hostname: <tenant>.inenp.naehrer.me
 Crossplane should create the namespace, the tenant database resources, the
 ExternalSecret resources, and Helm releases or Argo CD applications that pass the
 values above to the charts.
-
