@@ -1,3 +1,105 @@
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: provider-kubernetes-runtime
+  labels:
+    app.kubernetes.io/name: provider-kubernetes-runtime
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  serviceAccountTemplate:
+    metadata:
+      name: provider-kubernetes
+      labels:
+        app.kubernetes.io/name: provider-kubernetes
+        app.kubernetes.io/part-of: inenp-platform
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: provider-kubernetes-tenant-manager
+  labels:
+    app.kubernetes.io/name: provider-kubernetes-tenant-manager
+    app.kubernetes.io/part-of: inenp-platform
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - resourcequotas
+      - limitranges
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - external-secrets.io
+    resources:
+      - externalsecrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - postgresql.cnpg.io
+    resources:
+      - clusters
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - applications
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: provider-kubernetes-tenant-manager
+  labels:
+    app.kubernetes.io/name: provider-kubernetes-tenant-manager
+    app.kubernetes.io/part-of: inenp-platform
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: provider-kubernetes-tenant-manager
+subjects:
+  - kind: ServiceAccount
+    name: provider-kubernetes
+    namespace: crossplane-system
+---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
@@ -7,6 +109,10 @@ metadata:
     app.kubernetes.io/part-of: inenp-platform
 spec:
   package: xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.15.0
+  runtimeConfigRef:
+    apiVersion: pkg.crossplane.io/v1beta1
+    kind: DeploymentRuntimeConfig
+    name: provider-kubernetes-runtime
 ---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
