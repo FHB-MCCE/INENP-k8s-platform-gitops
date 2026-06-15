@@ -14,7 +14,10 @@ For every tenant claim, the composition now creates:
 The backend release is installed from the backend repository Helm chart at
 `charts/weather-app-backend`. It receives the tenant-specific image tag from the
 claim and uses the `backend-app-secrets` Kubernetes Secret for database and AVWX
-configuration.
+configuration. Because the backend image is stored in the private GHCR
+organization, the release also references the tenant `frontend-ghcr-pull`
+dockerconfigjson Secret that External Secrets Operator materializes from Google
+Secret Manager.
 
 ## Secret Contract
 
