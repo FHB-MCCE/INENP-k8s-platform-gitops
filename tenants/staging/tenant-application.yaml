@@ -15,5 +15,5 @@ spec:
     environment: staging
     hostname: staging.inenp.naehrer.me
     frontendImageTag: latest
-    backendImageTag: 35899d19989580024d4ab80ad8813d66823ac1f8
+    backendImageTag: 19c4fe72fdfd988ae75f1c6f27e3c5cb37e3ed7a
     databaseSize: small
