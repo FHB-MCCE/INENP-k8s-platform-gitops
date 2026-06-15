@@ -9,6 +9,7 @@ Gate 3 adds platform operators here in separate pull requests so ownership stays
 - CloudNativePG
 - ExternalDNS
 - ClusterSecretStore
+- Argo CD repository credentials
 - Crossplane providers
 - TenantApplication API
 
@@ -19,6 +20,7 @@ Current child Applications:
 - `cloudnative-pg`
 - `external-dns`
 - `cluster-secret-store`
+- `argocd-repository-credentials`
 - `crossplane`
 - `crossplane-providers`
 - `tenant-application-api`

@@ -1,0 +1,38 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: argocd-frontend-repo
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-frontend-repo
+    app.kubernetes.io/part-of: inenp-platform
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: gcp-secret-manager
+  target:
+    name: argocd-frontend-repo
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      type: Opaque
+      metadata:
+        labels:
+          argocd.argoproj.io/secret-type: repository
+          app.kubernetes.io/name: argocd-frontend-repo
+          app.kubernetes.io/part-of: inenp-platform
+      data:
+        type: git
+        url: https://github.com/FHB-MCCE/INENP-k8s-platform-frontend.git
+        username: "{{ .username }}"
+        password: "{{ .password }}"
+  data:
+    - secretKey: username
+      remoteRef:
+        key: argocd-frontend-repo-credentials
+        property: username
+    - secretKey: password
+      remoteRef:
+        key: argocd-frontend-repo-credentials
+        property: password
