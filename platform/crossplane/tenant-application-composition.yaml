@@ -373,6 +373,8 @@ spec:
                     valuesObject:
                       image:
                         tag: latest
+                      imagePullSecrets:
+                        - name: frontend-ghcr-pull
                       secrets:
                         existingSecretName: backend-app-secrets
                         databaseUrlKey: spring-datasource-url
