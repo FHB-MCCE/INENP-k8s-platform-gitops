@@ -11,9 +11,9 @@ and Crossplane reconciles each claim into one isolated tenant stack.
 | `staging` | `staging` | `staging.inenp.naehrer.me` | `small` |
 | `demo` | `demo` | `demo.inenp.naehrer.me` | `small` |
 
-Both tenants currently track the `latest` frontend and backend image tags. The
-image tags can be changed independently in the claim when validating update and
-rollback behavior.
+Both tenants currently track the `latest` frontend image tag and pin the backend
+to the Gate 6 verified commit image tag. Image tags can be changed independently
+in the claim when validating update and rollback behavior.
 
 ## Provisioned Resources
 
