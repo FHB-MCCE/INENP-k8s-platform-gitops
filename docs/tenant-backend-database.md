@@ -19,6 +19,11 @@ organization, the release also references the tenant `frontend-ghcr-pull`
 dockerconfigjson Secret that External Secrets Operator materializes from Google
 Secret Manager.
 
+CloudNativePG also manages the `weather` login role from
+`backend-app-secrets`. This keeps the database role password aligned with the
+Secret materialized by External Secrets Operator, including after Secret Manager
+version updates or a delayed first synchronization.
+
 ## Secret Contract
 
 Secret values stay in Google Secret Manager. The tenant namespace receives only
@@ -36,7 +41,7 @@ The generated Kubernetes Secret contains:
 | Key | Consumer |
 |---|---|
 | `username` | CloudNativePG bootstrap owner user. |
-| `password` | CloudNativePG bootstrap owner password. |
+| `password` | CloudNativePG bootstrap owner and managed role password. |
 | `spring-datasource-url` | Backend datasource URL. |
 | `spring-datasource-username` | Backend datasource user. |
 | `spring-datasource-password` | Backend datasource password. |
