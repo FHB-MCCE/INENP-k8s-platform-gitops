@@ -9,7 +9,7 @@ External Secrets Operator.
 Create one Google Secret Manager secret per environment:
 
 ```text
-inenp-ghcr-frontend-pull
+frontend-ghcr-pull-token
 ```
 
 The secret value must be the complete `.dockerconfigjson` payload:
@@ -53,7 +53,7 @@ spec:
   data:
     - secretKey: .dockerconfigjson
       remoteRef:
-        key: inenp-ghcr-frontend-pull
+        key: frontend-ghcr-pull-token
 ```
 
 The frontend Helm chart already expects this secret by default:
