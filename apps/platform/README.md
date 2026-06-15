@@ -7,6 +7,7 @@ Gate 3 adds platform operators here in separate pull requests so ownership stays
 - cert-manager and ACME issuers
 - External Secrets Operator
 - CloudNativePG
+- Ingress NGINX
 - ExternalDNS
 - ClusterSecretStore
 - Argo CD repository credentials
@@ -18,6 +19,7 @@ Current child Applications:
 - `cert-manager`
 - `external-secrets`
 - `cloudnative-pg`
+- `ingress-nginx`
 - `external-dns`
 - `cluster-secret-store`
 - `argocd-repository-credentials`
