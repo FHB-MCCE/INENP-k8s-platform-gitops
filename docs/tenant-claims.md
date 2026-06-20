@@ -11,11 +11,11 @@ and Crossplane reconciles each claim into one isolated tenant stack.
 | `staging` | `staging` | `staging.inenp.naehrer.me` | `small` |
 | `demo` | `demo` | `demo.inenp.naehrer.me` | `small` |
 
-Staging is the Gate 6 canary and pins the backend and frontend images that move
-METAR access behind the backend API. Demo remains on the previous image tags
-until staging users, locations, forecast, METAR, and browser secret handling are
-verified. Image tags are promoted independently through TenantApplication
-claims rather than mutable `latest` rollouts.
+Staging was used as the Gate 6 canary for the backend and frontend images that
+move METAR access behind the backend API. Users, locations, forecast, METAR,
+and browser runtime configuration were verified before the same immutable image
+tags were promoted to demo. Image tags are promoted independently through
+TenantApplication claims rather than mutable `latest` rollouts.
 
 ## Provisioned Resources
 
