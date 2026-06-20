@@ -14,6 +14,6 @@ spec:
     tenantName: demo
     environment: demo
     hostname: demo.inenp.naehrer.me
-    frontendImageTag: latest
-    backendImageTag: 19c4fe72fdfd988ae75f1c6f27e3c5cb37e3ed7a
+    frontendImageTag: 2c3e96c3f4962723d823e6b09da0ef521f5cc0d9
+    backendImageTag: f5feb13942519da31cfac8f87ebdd58fd0cc0784
     databaseSize: small
