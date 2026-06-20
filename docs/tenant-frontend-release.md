@@ -15,7 +15,7 @@ The `hostname` claim parameter is the public frontend hostname:
 The backend runtime URL is derived from the same value:
 
 ```text
-https://api.<tenant>.inenp.naehrer.me
+https://api.<tenant>.inenp.naehrer.me/api
 ```
 
 This keeps the browser-facing frontend endpoint and API endpoint tenant-specific
@@ -30,7 +30,7 @@ image:
   tag: <frontendImageTag>
 
 runtimeConfig:
-  backendApiUrl: https://api.<hostname>
+  backendApiUrl: https://api.<hostname>/api
 
 ingress:
   enabled: true
@@ -47,6 +47,10 @@ ingress:
       hosts:
         - <hostname>
 ```
+
+The API base URL includes the backend `/api` prefix. Frontend service methods
+append resource-specific paths such as `/user/`, `/<userId>/favorite/`, and
+`/<userId>/<locationId>/metar/`.
 
 The frontend chart keeps `frontend-ghcr-pull` as the default image pull secret.
 That secret is materialized in tenant namespaces through External Secrets Operator
