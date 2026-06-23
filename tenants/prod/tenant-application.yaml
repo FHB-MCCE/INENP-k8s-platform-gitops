@@ -1,0 +1,19 @@
+---
+apiVersion: platform.inenp.at/v1alpha1
+kind: TenantApplication
+metadata:
+  name: prod
+  namespace: tenants
+  labels:
+    app.kubernetes.io/name: prod-tenant
+    app.kubernetes.io/part-of: inenp-platform
+    inenp.at/environment: prod
+    inenp.at/tenant: prod
+spec:
+  parameters:
+    tenantName: prod
+    environment: prod
+    hostname: prod.inenp.naehrer.me
+    frontendImageTag: 2c3e96c3f4962723d823e6b09da0ef521f5cc0d9
+    backendImageTag: f5feb13942519da31cfac8f87ebdd58fd0cc0784
+    databaseSize: small
