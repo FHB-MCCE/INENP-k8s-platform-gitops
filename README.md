@@ -1,16 +1,16 @@
 # INENP Kubernetes Platform - GitOps
 
-Argo CD App-of-Apps-Konfiguration und Kubernetes-Manifeste fÃ¼r die INENP Kubernetes Platform.
+Argo CD App-of-Apps-Konfiguration und Kubernetes-Manifeste für die INENP Kubernetes Platform.
 
-## Ãœberblick
+## Überblick
 
-Dieses Repository enthÃ¤lt die GitOps-Definitionen fÃ¼r:
+Dieses Repository enthält die GitOps-Definitionen für:
 
 - **Argo CD** - App-of-Apps Bootstrap, ApplicationSets
 - **cert-manager** - TLS-Zertifikate via ACME DNS-01
 - **ExternalDNS** - Automatische DNS-Verwaltung
 - **External Secrets Operator** - Secrets aus Google Secret Manager
-- **CloudNativePG** - PostgreSQL-Operator fÃ¼r Datenbanken
+- **CloudNativePG** - PostgreSQL-Operator für Datenbanken
 - **Crossplane** - Multi-Tenancy via XRDs und Compositions
 - **Tenant-Konfigurationen** - Namespace, Secrets, Ingress pro Tenant
 
@@ -24,18 +24,18 @@ Dieses Repository enthÃ¤lt die GitOps-Definitionen fÃ¼r:
 
 ```text
 .
-â”œâ”€â”€ infrastructure/   # Cluster-weite Infrastruktur (Argo CD, cert-manager, ExternalDNS, ESO)
-â”œâ”€â”€ platform/         # Platform-Services (Crossplane, CloudNativePG Operator)
-â”œâ”€â”€ apps/             # Argo CD App-of-Apps Definitionen
-â”œâ”€â”€ tenants/          # Tenant-spezifische Konfigurationen (Namespaces, Claims)
-â”œâ”€â”€ docs/             # Bootstrap- und Betriebsdokumentation
-â”œâ”€â”€ .github/          # CI/CD Workflows
-â””â”€â”€ README.md
+|-- infrastructure/   # Cluster-weite Infrastruktur (Argo CD, cert-manager, ExternalDNS, ESO)
+|-- platform/         # Platform-Services (Crossplane, CloudNativePG Operator)
+|-- apps/             # Argo CD App-of-Apps Definitionen
+|-- tenants/          # Tenant-spezifische Konfigurationen (Namespaces, Claims)
+|-- docs/             # Bootstrap- und Betriebsdokumentation
+|-- .github/          # CI/CD Workflows
+`-- README.md
 ```
 
 ## Argo CD Bootstrap
 
-Der Gate-3-Bootstrap ist in [docs/argocd-bootstrap.md](docs/argocd-bootstrap.md) dokumentiert. Argo CD wird zunÃ¤chst nur intern betrieben; Ã¶ffentliche Erreichbarkeit folgt spÃ¤ter Ã¼ber DNS und cert-manager.
+Der Gate-3-Bootstrap ist in [docs/argocd-bootstrap.md](docs/argocd-bootstrap.md) dokumentiert. Argo CD wird zunächst nur intern betrieben; öffentliche Erreichbarkeit folgt später über DNS und cert-manager.
 
 ## Plattform-Operatoren
 
